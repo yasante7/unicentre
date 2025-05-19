@@ -34,7 +34,11 @@ export function CtaSection() {
               className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row"
             >
               <Link href="/get-started">
-                <Button size="lg" variant="secondary" className="w-full sm:w-auto">
+                <Button 
+                  size="lg" 
+                  variant="outline" 
+                  className="w-full border-white text-black hover:bg-white/10 sm:w-auto"
+                >
                   Get Started for Free
                 </Button>
               </Link>
@@ -42,7 +46,7 @@ export function CtaSection() {
                 <Button
                   size="lg"
                   variant="outline"
-                  className="w-full border-white text-white hover:bg-white/10 sm:w-auto"
+                  className="w-full border-white text-black hover:bg-white/10 sm:w-auto"
                 >
                   Request a Demo
                 </Button>

@@ -31,7 +31,7 @@ export function FeaturesSection() {
   ]
 
   return (
-    <section id="features" className="py-20 md:py-32">
+    <section id="features" className="px-4 md:px-8 py-12.5 md:py-20">
       <div className="container">
         <AnimatedElement>
           <div className="mx-auto max-w-[600px] text-center">
@@ -39,7 +39,7 @@ export function FeaturesSection() {
               Features Designed for Student Success
             </h2>
             <p className="mt-4 text-muted-foreground">
-              Everything you need to navigate the college admission process with confidence.
+              Everything you need to navigate the University admission process with confidence.
             </p>
           </div>
         </AnimatedElement>

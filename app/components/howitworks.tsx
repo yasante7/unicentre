@@ -4,43 +4,50 @@ export function HowItWorksSection() {
   const steps = [
     {
       number: "01",
-      title: "Create Your Profile",
+      title: "Sign Up",
       description:
-        "Enter your academic information, extracurricular activities, test scores, and preferences to build your student profile.",
+        "Enter your Biodata to Sign Up. This allows you to track your recommended programs and make future changes to your results.",
     },
     {
       number: "02",
-      title: "Get Personalized Recommendations",
+      title: "Create Your Profile",
       description:
-        "Our algorithm analyzes your profile and suggests universities that match your academic strengths and preferences.",
+        "Enter your academic information to build your student profile.",
     },
     {
       number: "03",
-      title: "Track Your Applications",
-      description: "Manage all your applications in one place, with deadline reminders and requirement checklists.",
+      title: "Get Personalized Recommendations",
+      description:
+        "Our algorithm analyzes your profile and suggest university Programs that match your academic strengths and preferences.",
     },
     {
       number: "04",
-      title: "Receive Admission Offers",
-      description: "Compare admission offers, scholarships, and make an informed decision about your academic future.",
+      title: "Learn more about the program and Make your choice",
+      description:
+        "Explore detailed information about each recommended program, including admission requirements, deadlines, and more.",
     },
+    {
+      number: "05",
+      title: "Track Your Applications",
+      description: "Manage all your applications in one place, with deadline reminders and requirement checklists.",
+    }
   ]
 
   return (
-    <section id="how-it-works" className="bg-muted/30 py-20 md:py-32">
+    <section id="how-it-works" className="bg-muted/30 px-4 md:px-8 py-12.5 md:py-20">
       <div className="container">
         <AnimatedElement>
           <div className="mx-auto max-w-[600px] text-center">
             <h2 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">How It Works</h2>
             <p className="mt-4 text-muted-foreground">
-              A simple four-step process to find and apply to your dream universities.
+              A simple five-step process to find and apply to your dream universities.
             </p>
           </div>
         </AnimatedElement>
 
         <div className="mt-16">
           {steps.map((step, index) => (
-            <AnimatedElement key={index} delay={index * 0.1}>
+            <AnimatedElement key={index} delay={index * 0.2}>
               <div className="relative mb-12 grid gap-8 md:grid-cols-[1fr_3fr]">
                 <div className="flex flex-col items-center md:items-end">
                   <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary text-lg font-bold text-primary-foreground">

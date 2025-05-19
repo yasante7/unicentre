@@ -4,7 +4,9 @@ import type React from "react"
 
 import { useState } from "react"
 import Link from "next/link"
-import { Eye, EyeOff, Loader2 } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { Eye, EyeOff, Loader2, AlertCircle } from "lucide-react"
+import { supabase } from "@/lib/supabase"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -15,23 +17,60 @@ interface LoginFormProps {
 }
 
 export function LoginForm({ onSuccess }: LoginFormProps) {
+  const router = useRouter()
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [errorMessage, setErrorMessage] = useState("")
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1500))
-    setIsLoading(false)
-    onSuccess()
+    setErrorMessage("")
+    
+    try {
+      // Use Supabase Auth to sign in the user
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      })
+      
+      if (error) {
+        setErrorMessage(error.message)
+        console.error("Login error:", error.message)
+        setIsLoading(false)
+        return
+      }
+      
+      if (data?.user) {
+        console.log("Login successful")
+        // Redirect to dashboard after successful login
+        router.push("/dashboard")
+        onSuccess()
+      } else {
+        setErrorMessage("Something went wrong. Please try again.")
+        setIsLoading(false)
+      }
+    } catch (error) {
+      console.error("Unexpected error during login:", error)
+      setErrorMessage("An unexpected error occurred. Please try again.")
+      setIsLoading(false)
+    }
   }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="space-y-2">
         <Label htmlFor="login-email">Email</Label>
-        <Input id="login-email" type="email" placeholder="Enter your email address" required />
+        <Input 
+          id="login-email" 
+          type="email" 
+          placeholder="Enter your email address" 
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required 
+        />
       </div>
 
       <div className="space-y-2">
@@ -46,6 +85,8 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
             id="login-password"
             type={showPassword ? "text" : "password"}
             placeholder="Enter your password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             required
           />
           <Button
@@ -65,6 +106,13 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
         </div>
       </div>
 
+      {errorMessage && (
+        <div className="flex items-center gap-2 rounded-md bg-red-50 p-2 text-sm text-red-600">
+          <AlertCircle className="h-4 w-4" />
+          <span>{errorMessage}</span>
+        </div>
+      )}
+
       <Button type="submit" className="w-full" disabled={isLoading}>
         {isLoading ? (
           <>
@@ -83,7 +131,31 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
       </div>
 
       <div className="grid grid-cols-2 gap-4">
-        <Button variant="outline" type="button" className="w-full">
+        <Button 
+          variant="outline" 
+          type="button" 
+          className="w-full"
+          onClick={async () => {
+            setIsLoading(true);
+            setErrorMessage("");
+            try {
+              const { error } = await supabase.auth.signInWithOAuth({
+                provider: 'google',
+                options: {
+                  redirectTo: `${window.location.origin}/dashboard`,
+                }
+              });
+              if (error) {
+                setErrorMessage(`Error with Google login: ${error.message}`);
+              }
+            } catch (error) {
+              console.error("Google login error:", error);
+              setErrorMessage("Failed to connect with Google. Please try again.");
+            } finally {
+              setIsLoading(false);
+            }
+          }}
+        >
           <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
             <path
               d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -104,7 +176,31 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
           </svg>
           Google
         </Button>
-        <Button variant="outline" type="button" className="w-full">
+        <Button 
+          variant="outline" 
+          type="button" 
+          className="w-full"
+          onClick={async () => {
+            setIsLoading(true);
+            setErrorMessage("");
+            try {
+              const { error } = await supabase.auth.signInWithOAuth({
+                provider: 'facebook',
+                options: {
+                  redirectTo: `${window.location.origin}/dashboard`,
+                }
+              });
+              if (error) {
+                setErrorMessage(`Error with Facebook login: ${error.message}`);
+              }
+            } catch (error) {
+              console.error("Facebook login error:", error);
+              setErrorMessage("Failed to connect with Facebook. Please try again.");
+            } finally {
+              setIsLoading(false);
+            }
+          }}
+        >
           <svg className="mr-2 h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
             <path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" />
           </svg>

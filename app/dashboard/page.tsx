@@ -27,7 +27,7 @@ export default function DashboardPage() {
             <div className="flex flex-col space-y-4 md:flex-row md:items-center md:justify-between md:space-y-0">
               <div>
                 <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
-                <p className="text-muted-foreground">Welcome back, Alex! Here's your admission journey overview.</p>
+                <p className="text-muted-foreground">Welcome back, Alex! Here&apos;s your admission journey overview.</p>
               </div>
               <div className="flex items-center gap-2">
                 <Button variant="outline">
@@ -128,7 +128,7 @@ export default function DashboardPage() {
                   <Card className="lg:col-span-3">
                     <CardHeader>
                       <CardTitle>Upcoming Deadlines</CardTitle>
-                      <CardDescription>Don't miss these important dates</CardDescription>
+                      <CardDescription>Don&apos;t miss these important dates</CardDescription>
                     </CardHeader>
                     <CardContent>
                       <UpcomingDeadlines />

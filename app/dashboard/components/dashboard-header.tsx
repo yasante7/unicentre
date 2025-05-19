@@ -1,7 +1,10 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import { Bell, ChevronDown, Menu, Search } from "lucide-react"
+import { supabase } from "@/lib/supabase"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -17,6 +20,57 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { DashboardSidebar } from "./dashboard-sidebar"
 
 export function DashboardHeader() {
+  const [userName, setUserName] = useState("Loading...");
+  const [isLoading, setIsLoading] = useState(true);
+  
+  useEffect(() => {
+    async function getUserData() {
+      try {
+        const { data: { user }, error } = await supabase.auth.getUser();
+        
+        if (error) {
+          console.error("Error fetching user:", error.message);
+          setUserName("Guest User");
+          return;
+        }
+        
+        if (user) {
+          // User found, extract first_name and last_name from metadata
+          const { first_name, last_name } = user.user_metadata;
+          if (first_name && last_name) {
+            setUserName(`${first_name}`);
+          } else {
+            // Fallback to email if names are not available
+            setUserName(user.email || "User");
+          }
+        } else {
+          setUserName("Guest User");
+        }
+      } catch (error) {
+        console.error("Unexpected error:", error);
+        setUserName("Guest User");
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    
+    getUserData();
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        console.error("Error signing out:", error.message);
+      } else {
+        // Redirect to home page or login page after logout
+        window.location.href = "/get-started";
+      }
+    } catch (error) {
+      console.error("Unexpected error during logout:", error);
+    }
+  };
+
   return (
     <header className="sticky top-0 z-50 flex h-16 items-center gap-4 border-b bg-background px-6">
       <Sheet>
@@ -74,8 +128,20 @@ export function DashboardHeader() {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="outline" className="gap-2">
-            <img src="/placeholder.svg?height=32&width=32" alt="Avatar" className="h-6 w-6 rounded-full" />
-            <span className="hidden md:inline-flex">Alex Johnson</span>
+            <Image 
+              src="/placeholder.svg?height=32&width=32" 
+              alt="Avatar" 
+              className="h-6 w-6 rounded-full" 
+              width={24}
+              height={24}
+            />
+            <span className="hidden md:inline-flex">
+              {isLoading ? (
+                <span className="animate-pulse">Loading...</span>
+              ) : (
+                userName
+              )}
+            </span>
             <ChevronDown className="h-4 w-4 text-muted-foreground" />
           </Button>
         </DropdownMenuTrigger>
@@ -86,7 +152,7 @@ export function DashboardHeader() {
           <DropdownMenuItem>Settings</DropdownMenuItem>
           <DropdownMenuItem>Support</DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>Log out</DropdownMenuItem>
+          <DropdownMenuItem onClick={handleLogout}>Log out</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </header>
